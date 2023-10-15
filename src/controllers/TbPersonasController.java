@@ -7,7 +7,7 @@ import java.util.ResourceBundle;
 import application.Main;
 
 import javafx.beans.property.SimpleStringProperty;
-
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 
@@ -20,6 +20,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
@@ -54,11 +55,22 @@ public class TbPersonasController implements Initializable{
     @FXML
     private TableColumn<Persona, Integer> tbColEdad;
     
+    @FXML
+    private Button btnImportar;
+
+    @FXML
+    private Button btnExportar;
+
+    @FXML
+    private TextField tfFiltroNombre;
+    
     private NuevaPersonaController newPersonaWindow;
     
     private static Image ICONO = new Image(Main.class.getResourceAsStream("/img/agenda.png"));
     
     private int personaIndex = -1;
+    
+    private ObservableList<Persona> originalLstPersona;
     
     @FXML
     void selectPersona(MouseEvent event) {
@@ -123,9 +135,8 @@ public class TbPersonasController implements Initializable{
      * Añade la informacion de la ventana DatosPersonasAgregarController a la tabla
      * */
     public void devolverPersonaNueva(Persona person) {
-    	ObservableList<Persona> obLstPersonas = tbViewPersonas.getItems();
-    	obLstPersonas.add(person);
-        tbViewPersonas.setItems(obLstPersonas);
+    	originalLstPersona.add(person);
+        tbViewPersonas.setItems(originalLstPersona);
     }
     
     /*
@@ -133,11 +144,62 @@ public class TbPersonasController implements Initializable{
      * */
     public void devolverPersonaMod(Persona person) {
     	tbViewPersonas.getItems().set(personaIndex, person);
+    	originalLstPersona = tbViewPersonas.getItems();
     }
     
+    /*
+     * Filtrará por nombres de la tabla de personas
+     * */
+    @FXML
+    void filtrarPorNombre(ActionEvent event) {
+    	
+    	String nom = tfFiltroNombre.getText().toString();
+    	
+    	if (nom != null) {
+    		ObservableList<Persona> obLstPersonasFiltrado = FXCollections.observableArrayList();
+        	
+        	for (Persona per : originalLstPersona) {
+        		
+        		if (per.getNombre().length() >= nom.length()) {
+        			
+        			boolean iguales = true;
+        			char[] nomFiltro = nom.toCharArray();
+        			char[] nomPersona = per.getNombre().toCharArray();
+        			
+        			for (int i = 0; i < nomFiltro.length; i++) {
+        				if (nomFiltro[i] != nomPersona[i]) {
+        					iguales = false;
+        					break;
+        				}
+        			}
+        			
+        			if (iguales == true) {
+            			obLstPersonasFiltrado.add(per);
+            		}
+        		}
+        	}
+        	
+        	if (!obLstPersonasFiltrado.isEmpty()) {
+        		tbViewPersonas.setItems(obLstPersonasFiltrado);
+        	}
+        	
+    	}
+    }
 
+    @FXML
+    void importarTabla(ActionEvent event) {
+
+    }
+    
+    @FXML
+    void exportarTabla(ActionEvent event) {
+
+    }
+    
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
+		
+		originalLstPersona = tbViewPersonas.getItems();
 		
 		tbColNombre.setCellValueFactory(new PropertyValueFactory<Persona, String>("nombre"));
         
