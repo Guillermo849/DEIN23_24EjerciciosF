@@ -70,6 +70,8 @@ public class TbPersonasController implements Initializable{
     
     private int personaIndex = -1;
     
+    private ObservableList<Persona> originalLstPersona;
+    
     @FXML
     void selectPersona(MouseEvent event) {
     	if (tbViewPersonas.getSelectionModel().getSelectedItem() != null) {
@@ -133,9 +135,8 @@ public class TbPersonasController implements Initializable{
      * Añade la informacion de la ventana DatosPersonasAgregarController a la tabla
      * */
     public void devolverPersonaNueva(Persona person) {
-    	ObservableList<Persona> obLstPersonas = tbViewPersonas.getItems();
-    	obLstPersonas.add(person);
-        tbViewPersonas.setItems(obLstPersonas);
+    	originalLstPersona.add(person);
+        tbViewPersonas.setItems(originalLstPersona);
     }
     
     /*
@@ -143,6 +144,7 @@ public class TbPersonasController implements Initializable{
      * */
     public void devolverPersonaMod(Persona person) {
     	tbViewPersonas.getItems().set(personaIndex, person);
+    	originalLstPersona = tbViewPersonas.getItems();
     }
     
     
@@ -163,6 +165,8 @@ public class TbPersonasController implements Initializable{
     
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
+		
+		originalLstPersona = tbViewPersonas.getItems();
 		
 		tbColNombre.setCellValueFactory(new PropertyValueFactory<Persona, String>("nombre"));
         
