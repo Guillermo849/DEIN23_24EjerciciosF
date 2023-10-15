@@ -20,6 +20,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
@@ -53,6 +54,15 @@ public class TbPersonasController implements Initializable{
 
     @FXML
     private TableColumn<Persona, Integer> tbColEdad;
+    
+    @FXML
+    private Button btnImportar;
+
+    @FXML
+    private Button btnExportar;
+
+    @FXML
+    private TextField tfFiltroNombre;
     
     private NuevaPersonaController newPersonaWindow;
     
@@ -135,7 +145,22 @@ public class TbPersonasController implements Initializable{
     	tbViewPersonas.getItems().set(personaIndex, person);
     }
     
+    
+    @FXML
+    void filtrarPorNombre(ActionEvent event) {
+    	
+    }
 
+    @FXML
+    void importarTabla(ActionEvent event) {
+
+    }
+    
+    @FXML
+    void exportarTabla(ActionEvent event) {
+
+    }
+    
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		
