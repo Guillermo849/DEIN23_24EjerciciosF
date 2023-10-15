@@ -1,8 +1,14 @@
 package controllers;
 
+import java.awt.desktop.OpenFilesEvent;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import javax.swing.JFileChooser;
 
 import application.Main;
 
@@ -185,10 +191,52 @@ public class TbPersonasController implements Initializable{
         	
     	}
     }
-
+    
+    /*
+     * Importará el archivo csv que selecciones en el buscador de archivos
+     *   y luego pondrá la información en la tabla
+     * */
     @FXML
     void importarTabla(ActionEvent event) {
-
+    	
+    	/* Habré el explorador de archivos */
+    	JFileChooser fc = new JFileChooser();
+    	int respuesta = fc.showOpenDialog(null);
+    	
+    	if (respuesta == JFileChooser.APPROVE_OPTION) {
+    		try {
+    			
+    			FileReader fr = new FileReader(fc.getSelectedFile().toString());
+    			
+    			try {
+    				BufferedReader br = new BufferedReader(fr);
+    				String linea = br.readLine();
+    				linea = br.readLine();
+    				
+    				ObservableList<Persona> obLstImportado = FXCollections.observableArrayList();
+    				
+    				/* Leerá cada línea de información en el archivo csv que hemos seleccionado */
+    				
+    				while (linea != null) {
+    					String[] infoPersona = linea.split(",");
+    					
+    					obLstImportado.add(new Persona(infoPersona[0], infoPersona[1], Integer.parseInt(infoPersona[2].toString())));
+    					
+    					linea = br.readLine();
+    				}
+    				
+    				originalLstPersona = obLstImportado;
+    				tbViewPersonas.setItems(originalLstPersona);
+    				
+    				
+    			} catch (IOException e) {
+    				System.out.println(e.toString());
+    			}
+    		} catch (FileNotFoundException e) {
+    			// TODO Auto-generated catch block
+    			System.out.println(e.toString());
+    		}
+    	}
     }
     
     @FXML
