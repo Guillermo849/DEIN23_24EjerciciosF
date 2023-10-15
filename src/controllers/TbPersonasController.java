@@ -7,7 +7,7 @@ import java.util.ResourceBundle;
 import application.Main;
 
 import javafx.beans.property.SimpleStringProperty;
-
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 
@@ -147,10 +147,43 @@ public class TbPersonasController implements Initializable{
     	originalLstPersona = tbViewPersonas.getItems();
     }
     
-    
+    /*
+     * Filtrará por nombres de la tabla de personas
+     * */
     @FXML
     void filtrarPorNombre(ActionEvent event) {
     	
+    	String nom = tfFiltroNombre.getText().toString();
+    	
+    	if (nom != null) {
+    		ObservableList<Persona> obLstPersonasFiltrado = FXCollections.observableArrayList();
+        	
+        	for (Persona per : originalLstPersona) {
+        		
+        		if (per.getNombre().length() >= nom.length()) {
+        			
+        			boolean iguales = true;
+        			char[] nomFiltro = nom.toCharArray();
+        			char[] nomPersona = per.getNombre().toCharArray();
+        			
+        			for (int i = 0; i < nomFiltro.length; i++) {
+        				if (nomFiltro[i] != nomPersona[i]) {
+        					iguales = false;
+        					break;
+        				}
+        			}
+        			
+        			if (iguales == true) {
+            			obLstPersonasFiltrado.add(per);
+            		}
+        		}
+        	}
+        	
+        	if (!obLstPersonasFiltrado.isEmpty()) {
+        		tbViewPersonas.setItems(obLstPersonasFiltrado);
+        	}
+        	
+    	}
     }
 
     @FXML
