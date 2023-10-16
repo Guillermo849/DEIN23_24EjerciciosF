@@ -2,6 +2,7 @@ package controllers;
 
 import java.awt.desktop.OpenFilesEvent;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -30,6 +31,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
 import model.Persona;
@@ -200,13 +203,16 @@ public class TbPersonasController implements Initializable{
     void importarTabla(ActionEvent event) {
     	
     	/* Habré el explorador de archivos */
-    	JFileChooser fc = new JFileChooser();
-    	int respuesta = fc.showOpenDialog(null);
+    	FileChooser fc = new FileChooser();
+    	fc.setTitle("Open CSV File");
+    	fc.getExtensionFilters().add(new ExtensionFilter("CSV Files", "*.csv"));
     	
-    	if (respuesta == JFileChooser.APPROVE_OPTION) {
+    	File ficheroElegido = fc.showOpenDialog(null);
+    	
+    	if (ficheroElegido != null) {
     		try {
     			
-    			FileReader fr = new FileReader(fc.getSelectedFile().toString());
+    			FileReader fr = new FileReader(ficheroElegido);
     			
     			try {
     				BufferedReader br = new BufferedReader(fr);
@@ -241,7 +247,7 @@ public class TbPersonasController implements Initializable{
     
     @FXML
     void exportarTabla(ActionEvent event) {
-
+    	
     }
     
 	@Override
