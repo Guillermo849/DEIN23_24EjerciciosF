@@ -2,11 +2,14 @@ package controllers;
 
 import java.awt.desktop.OpenFilesEvent;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ResourceBundle;
 
 import javax.swing.JFileChooser;
@@ -230,10 +233,10 @@ public class TbPersonasController implements Initializable{
     					
     					linea = br.readLine();
     				}
+    				br.close();
     				
     				originalLstPersona = obLstImportado;
     				tbViewPersonas.setItems(originalLstPersona);
-    				
     				
     			} catch (IOException e) {
     				System.out.println(e.toString());
@@ -248,6 +251,39 @@ public class TbPersonasController implements Initializable{
     @FXML
     void exportarTabla(ActionEvent event) {
     	
+    	try {
+    		FileChooser fc = new FileChooser();
+        	String currentPath = Paths.get(".").toAbsolutePath().normalize().toString();
+        	fc.setInitialDirectory(new File(currentPath));
+        	fc.setTitle("Save CSV File");
+        	fc.setInitialFileName("persona.csv");
+        	fc.getExtensionFilters().add(new ExtensionFilter("CSV Files", "*.csv"));
+        	
+        	File ficheroElegido = fc.showSaveDialog(null);
+        	fc.setInitialDirectory(ficheroElegido.getParentFile());
+        	
+        	if (ficheroElegido != null) {
+        		
+        		try {
+    				FileWriter fw = new FileWriter(ficheroElegido);
+    				BufferedWriter bw = new BufferedWriter(fw);
+    				
+    				bw.write("Nombre,Apellidos,Edad \n");
+    				
+    				for (Persona pers : tbViewPersonas.getItems()) {
+    					bw.write(pers.toString()+'\n');
+    				}
+    				bw.close();
+    				
+    				
+    			} catch (IOException e) {
+    				// TODO Auto-generated catch block
+    				System.out.println(e);
+    			}
+        	}
+    	} catch (NullPointerException e) {
+			// TODO: handle exception
+		}
     }
     
 	@Override
