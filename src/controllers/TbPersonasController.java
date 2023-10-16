@@ -205,8 +205,13 @@ public class TbPersonasController implements Initializable{
     @FXML
     void importarTabla(ActionEvent event) {
     	
+    	
     	/* Habré el explorador de archivos */
     	FileChooser fc = new FileChooser();
+    	/* Nos abrirá en explorador de archivos en el directorio donde se encuentra la aplicación */
+    	String currentPath = Paths.get(".").toAbsolutePath().normalize().toString() + "/resources/csv";
+    	fc.setInitialDirectory(new File(currentPath));
+    	
     	fc.setTitle("Open CSV File");
     	fc.getExtensionFilters().add(new ExtensionFilter("CSV Files", "*.csv"));
     	
@@ -225,7 +230,6 @@ public class TbPersonasController implements Initializable{
     				ObservableList<Persona> obLstImportado = FXCollections.observableArrayList();
     				
     				/* Leerá cada línea de información en el archivo csv que hemos seleccionado */
-    				
     				while (linea != null) {
     					String[] infoPersona = linea.split(",");
     					
@@ -248,13 +252,18 @@ public class TbPersonasController implements Initializable{
     	}
     }
     
+    /*
+     * Exportará la información de la tabla a un fichero CSV
+     * */
     @FXML
     void exportarTabla(ActionEvent event) {
     	
     	try {
     		FileChooser fc = new FileChooser();
-        	String currentPath = Paths.get(".").toAbsolutePath().normalize().toString();
+    		/* Nos abrirá en explorador de archivos en el directorio donde se encuentra la aplicación */
+        	String currentPath = Paths.get(".").toAbsolutePath().normalize().toString() + "/resources/csv";
         	fc.setInitialDirectory(new File(currentPath));
+        	
         	fc.setTitle("Save CSV File");
         	fc.setInitialFileName("persona.csv");
         	fc.getExtensionFilters().add(new ExtensionFilter("CSV Files", "*.csv"));
@@ -262,6 +271,7 @@ public class TbPersonasController implements Initializable{
         	File ficheroElegido = fc.showSaveDialog(null);
         	fc.setInitialDirectory(ficheroElegido.getParentFile());
         	
+        	/* Escribimos la información de la tabla en el archivo creado */
         	if (ficheroElegido != null) {
         		
         		try {
