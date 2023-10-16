@@ -45,4 +45,10 @@ public class Persona {
 		
 	}
 	
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return nombre + "," + apellidos + "," + edad;
+	}
+	
 }
