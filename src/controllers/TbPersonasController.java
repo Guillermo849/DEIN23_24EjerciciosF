@@ -1,8 +1,18 @@
 package controllers;
 
+import java.awt.desktop.OpenFilesEvent;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ResourceBundle;
+
+import javax.swing.JFileChooser;
 
 import application.Main;
 
@@ -24,6 +34,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
 import model.Persona;
@@ -185,15 +197,103 @@ public class TbPersonasController implements Initializable{
         	
     	}
     }
-
+    
+    /*
+     * Importará el archivo csv que selecciones en el buscador de archivos
+     *   y luego pondrá la información en la tabla
+     * */
     @FXML
     void importarTabla(ActionEvent event) {
-
+    	
+    	
+    	/* Habré el explorador de archivos */
+    	FileChooser fc = new FileChooser();
+    	/* Nos abrirá en explorador de archivos en el directorio donde se encuentra la aplicación */
+    	String currentPath = Paths.get(".").toAbsolutePath().normalize().toString() + "/resources/csv";
+    	fc.setInitialDirectory(new File(currentPath));
+    	
+    	fc.setTitle("Open CSV File");
+    	fc.getExtensionFilters().add(new ExtensionFilter("CSV Files", "*.csv"));
+    	
+    	File ficheroElegido = fc.showOpenDialog(null);
+    	
+    	if (ficheroElegido != null) {
+    		try {
+    			
+    			FileReader fr = new FileReader(ficheroElegido);
+    			
+    			try {
+    				BufferedReader br = new BufferedReader(fr);
+    				String linea = br.readLine();
+    				linea = br.readLine();
+    				
+    				ObservableList<Persona> obLstImportado = FXCollections.observableArrayList();
+    				
+    				/* Leerá cada línea de información en el archivo csv que hemos seleccionado */
+    				while (linea != null) {
+    					String[] infoPersona = linea.split(",");
+    					
+    					obLstImportado.add(new Persona(infoPersona[0], infoPersona[1], Integer.parseInt(infoPersona[2].toString())));
+    					
+    					linea = br.readLine();
+    				}
+    				br.close();
+    				
+    				originalLstPersona = obLstImportado;
+    				tbViewPersonas.setItems(originalLstPersona);
+    				
+    			} catch (IOException e) {
+    				System.out.println(e.toString());
+    			}
+    		} catch (FileNotFoundException e) {
+    			// TODO Auto-generated catch block
+    			System.out.println(e.toString());
+    		}
+    	}
     }
     
+    /*
+     * Exportará la información de la tabla a un fichero CSV
+     * */
     @FXML
     void exportarTabla(ActionEvent event) {
-
+    	
+    	try {
+    		FileChooser fc = new FileChooser();
+    		/* Nos abrirá en explorador de archivos en el directorio donde se encuentra la aplicación */
+        	String currentPath = Paths.get(".").toAbsolutePath().normalize().toString() + "/resources/csv";
+        	fc.setInitialDirectory(new File(currentPath));
+        	
+        	fc.setTitle("Save CSV File");
+        	fc.setInitialFileName("persona.csv");
+        	fc.getExtensionFilters().add(new ExtensionFilter("CSV Files", "*.csv"));
+        	
+        	File ficheroElegido = fc.showSaveDialog(null);
+        	fc.setInitialDirectory(ficheroElegido.getParentFile());
+        	
+        	/* Escribimos la información de la tabla en el archivo creado */
+        	if (ficheroElegido != null) {
+        		
+        		try {
+    				FileWriter fw = new FileWriter(ficheroElegido);
+    				BufferedWriter bw = new BufferedWriter(fw);
+    				
+    				bw.write("Nombre,Apellidos,Edad \n");
+    				
+    				for (Persona pers : tbViewPersonas.getItems()) {
+    					bw.write(pers.toString()+'\n');
+    				}
+    				bw.close();
+    				
+    				
+    			} catch (IOException e) {
+    				// TODO Auto-generated catch block
+    				System.out.println(e);
+    			}
+        	}
+    	} catch (NullPointerException e) {
+			// TODO: handle exception
+		}
     }
     
 	@Override
